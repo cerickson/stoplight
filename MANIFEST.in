@@ -1,0 +1,3 @@
+include *.txt *.md
+recursive-include examples *.txt
+recursive-include stopchart *.py
