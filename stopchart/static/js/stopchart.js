@@ -30,12 +30,15 @@ function nestedIndex(data, j, name) {
 
 var colorkey = ["green", "yellow", "red"];
 
-var radius = 50;
-var default_rowheaders = ["good", "cool", "wow"];
-var default_data = [{name: "Boeing", data: [1, 2, 0]},
-               {name: "Airbus", data: [1, 1, 1]},
-               {name: "Embraer", data: [2, 0, 0]}
-              ];
+var circleStyle = {stroke: "black", strokeWidth: "3px", radius: 50}
+var default_colheaders = ["good", "cool", "wow"];
+var default_data = [
+  {name: "cat", data: [1, 2, 0]},
+  {name: "dog", data: [1, 1, 1]},
+  {name: "lizard", data: [2, 0, 0]},
+  {name: "fish", data: [1, 1, 1]},
+  {name: "giraffe", data: [1, 2, 1]}
+  ];
 
 var margin = {top: 20, right: 20, bottom: 20, left: 20},
     padding = {top: 60, right: 60, bottom: 60, left: 60},
@@ -48,6 +51,31 @@ var margin = {top: 20, right: 20, bottom: 20, left: 20},
 
 // var rScale = d3.scaleLinear()
 //     .domain()
+
+function updateChart() {
+  update(default_colheaders, default_data, circleStyle);
+}
+
+d3.select("#addrow-button")
+  .on("click", function() {
+    var newData = []
+    for (var i=0; i<default_data[0].data.length; i++) {
+      newData.push(0)
+    }
+    var row = {name: "marmot", data: newData};
+    default_data.push(row);
+    updateChart();
+  })
+
+d3.select("#addcol-button")
+    .on("click", function() {
+      colName = "super"
+      default_colheaders.push(colName);
+      for (var i=0; i<default_data.length; i++) {
+        default_data[i].data.push(0);
+      }
+      updateChart();
+    })
 
 var svg = d3.select("#svg-container").append("svg")
     .attr("width", outerWidth)
@@ -71,40 +99,63 @@ svg.append("rect")
 // svg.append("g")
 //     .attr("id", "svg-col-headers");
 
-update(default_rowheaders, default_data);
+updateChart();
 
-function update(headers, rowdata) {
+function update(headers, rowdata, styleData) {
   dataset = rowdata;
   colheaders = headers;
+  chartStyle = styleData;
+  // console.log(dataset);
 
   var t = d3.transition()
       .ease(d3.easeQuadIn)
-      .duration(500);
+      .duration(300);
 
   var svgRowHeaders = svg.selectAll(".svg-row-header")
-      .data(dataset);
+      .data(dataset, function(d) {return d.name;});
 
   svgRowHeaders.exit()
       .transition(t)
-      .remove()
+      .attr("x", 1000)
+      .remove();
 
-  svgRowHeaders.transition(t)
-
-  svgRowHeaders.enter()
-      .append("text")
-      .attr("class", "svg-row-header")
-      .attr("x", width / (dataset.length + 1) / 2)
-      .attr("y", function(d,i) {
-        return height + radius * i;
+  svgRowHeaders.on("click", function(d, i) {
+          var newdata = dataset.splice(i, 1);
+          updateChart();
       })
       .transition(t)
+      .attr("x", function(d) {
+        return width / (d.data.length + 1) / 2;
+      })
       .attr("y", function(d, i) {
-        return (20 + 10 + radius / 2) * (i + 1);
+        return (20 + 10 + chartStyle.radius / 2) * (i + 1);
       })
       .text(function(d) {
         return d.name;
       })
-      .attr("text-anchor", "middle");
+
+
+  svgRowHeaders.enter()
+      .append("text")
+      .on("click", function(d, i) {
+          var newdata = dataset.splice(i, 1);
+          updateChart();
+      })
+      .attr("class", "svg-row-header")
+      .attr("text-anchor", "middle")
+      .attr("x", function(d) {
+        return width / (d.data.length + 1) / 2;
+      })
+      .attr("y", function(d,i) {
+        return height + chartStyle.radius * i;
+      })
+      .transition(t)
+      .attr("y", function(d, i) {
+        return (20 + 10 + chartStyle.radius / 2) * (i + 1);
+      })
+      .text(function(d) {
+        return d.name;
+      });
 
   var svgColHeaders = svg.selectAll(".svg-col-header")
       .data(colheaders);
@@ -114,12 +165,22 @@ function update(headers, rowdata) {
       .remove()
 
   svgColHeaders.transition(t)
+      .attr("x", function(d, i) {
+        return width / (dataset[0].data.length + 1) * (i + 1) + chartStyle.radius / 2;
+      })
+      .attr("y", function(d, i) {
+        return 20;
+      })
+      .text(function(d) {
+        return d;
+      })
+      .attr("text-anchor", "middle");
 
   svgColHeaders.enter()
       .append("text")
       .attr("class", "svg-col-header")
       .attr("x", function(d, i) {
-        return width / (dataset.length + 1) * (i + 1) + radius / 2;
+        return width / (dataset[0].data.length + 1) * (i + 1) + chartStyle.radius / 2;
       })
       .attr("y", function(d, i) {
         return 20;
@@ -135,15 +196,16 @@ function update(headers, rowdata) {
 
   svgCircles.exit()
       .transition(t)
+      .attr("cx", 1000)
       .remove();
 
   svgCircles.transition(t)
-      .attr("r", radius / 2 )
+      .attr("r", chartStyle.radius / 2 )
       .attr("cx", function(d) {
-        return (width / (dataset.length + 1)) * (d.x + 1) + radius / 2
+        return (width / (dataset[0].data.length + 1)) * (d.x + 1) + chartStyle.radius / 2
       })
       .attr("cy", function(d) {
-        return (20 + 10 + radius / 2) * (d.y + 1);
+        return (20 + 10 + chartStyle.radius / 2) * (d.y + 1);
       })
       .attr("fill", function(d) {
         return colorkey[d.colorkey];
@@ -157,20 +219,26 @@ function update(headers, rowdata) {
               newcolor = 0;
           };
           dataset[d.y].data[d.x] = newcolor;
-          update(colheaders, dataset);
+          updateChart();
       })
-      .attr("r", radius / 2 )
+      .attr("r", chartStyle.radius / 2 )
       .attr("cx", function(d) {
-        return (width / (dataset.length + 1)) * (d.x + 1) + radius / 2
+        return (width / (dataset[0].data.length + 1)) * (d.x + 1) + chartStyle.radius / 2
       })
       .attr("cy", function(d) {
-        return height + radius * d.y;
+        return height + chartStyle.radius * d.y;
       })
       .transition(t)
       .attr("cy", function(d) {
-        return (20 + 10 + radius / 2) * (d.y + 1);
+        return (20 + 10 + chartStyle.radius / 2) * (d.y + 1);
       })
       .attr("fill", function(d) {
         return colorkey[d.colorkey];
-      });
+      })
+      .attr("stroke", chartStyle.stroke)
+      .attr("stroke-width", chartStyle.strokeWidth)
+
+  default_data = dataset;
+  default_colheaders = colheaders;
+  styleData = circleStyle;
 }
