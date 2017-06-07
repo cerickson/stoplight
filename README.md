@@ -1,4 +1,4 @@
-# StopChart
+# Stoplight
 
 Stoplight Chart Generator
 
