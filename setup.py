@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-setup(name='stopchart',
+setup(name='stoplight',
       version='0.1.0alpha',
       description='Stoplight chart generator web application',
       author='Chris Erickson',

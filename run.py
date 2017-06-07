@@ -1,5 +1,5 @@
 import os
-from stopchart import app
+from stoplight import app
 
 def runserver():
     port = int(os.environ.get('PORT', 5000))
