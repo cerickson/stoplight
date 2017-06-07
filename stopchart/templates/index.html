@@ -10,16 +10,31 @@
 
     </head>
     <body>
-      <div class="container-fluid">
-        <div id="svg-container" class="col-lg-6 text-center"></div>
-        <div id="control-container" class="col-lg-6">
-          <div id="buttons" class="col-lg-6">
-            <button class="btn btn-default" id="addrow-button">Add Row</button>
-            <button class="btn btn-default" id="addcol-button">Add Column</button>
-
-          </div>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Brand</a>
+                </div>
+            </div>
+        </nav>
+        <div class="container-fluid">
+            <div id="svg-container" class="col-lg-6 text-center"></div>
+            <div id="control-container" class="col-lg-6">
+                <div id="buttons" class="col-lg-6">
+                    <button class="btn btn-default" id="addrow-button">Add Row</button>
+                    <button class="btn btn-default" id="addcol-button">Add Column</button>
+                    <form class="form">
+                        <input class="text" id="itemname-field"></input>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
 <!--
       <script src="https://d3js.org/d3.v4.min.js"></script>
       <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
